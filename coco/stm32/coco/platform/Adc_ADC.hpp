@@ -44,8 +44,8 @@ public:
 protected:
 
     // ADC
-    adc::Registers adc;
-    Array<const adc::Input> inputs;
+    adc::Instance adc_;
+    Array<const adc::Input> inputs_;
 };
 
 } // namespace coco

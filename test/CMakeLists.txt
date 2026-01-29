@@ -33,23 +33,17 @@ function(board_test TEST BOARD_LIB)
 	endif()
 endfunction()
 
-# progbox test board, derive from stm32g474nucleo
-#if(${PLATFORM} STREQUAL "stm32g474xx")
-#	add_library(progbox
-#		progbox/debug.cpp
-#	)
-#
-#	# inherit from stm32g474nucleo
-#	target_link_libraries(progbox
-#		PUBLIC
-#			coco-devboards::stm32g474nucleo
-#	)
-#endif()
 
-board_test(AdcTest coco-devboards::stm32g474nucleo)
+board_test(AdcTest coco-devboards::nucleo-g0b1re)
+board_test(AdcTest coco-devboards::nucleo-g431rb)
+board_test(AdcTest coco-devboards::nucleo-g474re)
 
 board_test(AdcDeviceTest coco-devboards::native)
+board_test(AdcDeviceTest coco-devboards::nucleo-g0b1re)
 board_test(AdcDeviceTest coco-devboards::stm32f3348discovery)
-board_test(AdcDeviceTest coco-devboards::stm32g431nucleo)
-board_test(AdcDeviceTest coco-devboards::stm32g474nucleo)
-#board_test(AdcDeviceTest progbox)
+board_test(AdcDeviceTest coco-devboards::nucleo-g431rb)
+board_test(AdcDeviceTest coco-devboards::nucleo-g474re)
+board_test(AdcDeviceTest coco-devboards::nucleo-g491re)
+#board_test(AdcDeviceTest coco-devboards::nucleo-u385rg-q)
+
+board_test(DualAdcDeviceTest coco-devboards::nucleo-g474re)

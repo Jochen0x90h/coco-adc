@@ -7,28 +7,28 @@ namespace coco {
 
 Adc_ADC::Adc_ADC(Array<const gpio::Config> analogPins, const adc::Info &adcInfo,
     adc::ClockConfig clockConfig, adc::Config config, Array<const adc::Input> inputs)
-    : inputs(inputs)
+    : inputs_(inputs)
 {
     // configure pins as analog
     for (auto pin : analogPins) {
-        gpio::configureAnalog(pin);
+        gpio::enableAnalog(pin);
     }
 
     // configure ADC
-    this->adc = adcInfo.configure(clockConfig,
-        config,
-        adc::Trigger::SOFTWARE);
+    adc_ = adcInfo.enableClock(clockConfig)
+        .calibrate()
+        .enable(config, adc::Trigger::SOFTWARE);
 }
 
 Adc_ADC::~Adc_ADC() {
 }
 
 int Adc_ADC::get(int channel) {
-    if (channel < 0 || channel >= this->inputs.size())
+    if (channel < 0 || channel >= inputs_.size())
         return 0;
 
-    // select input and start conversion
-    return this->adc.setInput(this->inputs[channel])
+    // select input, start conversion and get data
+    return adc_.setInput(inputs_[channel])
         .start()
         .wait()
         .data();
