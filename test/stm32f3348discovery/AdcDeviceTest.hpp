@@ -13,27 +13,26 @@ using Sample = uint8_t;
 constexpr auto FORMAT = adc::Config::RES_8;
 constexpr int SAMPLE_COUNT = 16;
 
-// analog pins
-const gpio::Config adcPins[] = {
-	gpio::Config::PA0, // ADC12_IN1 (PA0)
-	gpio::Config::PA1 // ADC12_IN2 (PA1)
-};
-
-// input sequence
-using Input = adc::Input;
-const Input sequence[] = {Input::CHANNEL1 | Input::CYCLES_7_5};
-
-// DAC1 pins
+// DAC1 pins for generator (channel 1) and test (channel 2)
 const gpio::Config dacPins[] = {
-	gpio::Config::PA4, // channel 1 (PA4)
-	gpio::Config::PA5 // channel 2 (PA5)
+	gpio::PA4, // channel 1 (PA4)
+	gpio::PA5 // channel 2 (PA5)
 };
 
+// ADC pins
+const gpio::Config adcPins[] = {
+	gpio::PA0, // ADC12_IN1 (PA0)
+	gpio::PA1 // ADC12_IN2 (PA1)
+};
 
-///
-/// Drivers for AdcDeviceTest
+// ADC input
+const adc::Input adcInput[] = {adc::Input::CH1 | adc::Input::CYCLES_7_5};
+
+
+
+/// @brief Drivers for AdcDeviceTest
 /// Connect DAC channel 1 to ADC (PA4 -> PA0)
-///
+/// Connect DAC channel 1 to oscilloscope (PA5)
 struct Drivers {
 	Loop_TIM2 loop{APB1_TIMER_CLOCK};
 
@@ -44,22 +43,25 @@ struct Drivers {
 		adc::ADC1_INFO,
 		dma::DMA1_CH1_INFO,
 		//adc::ClockConfig::CLOCK_AHB_DIV4, // 10MHz
-		adc::ClockConfig::RCC_DIV1, // 40MHz, see systemInit()
+		adc::ClockConfig::RCC_DIV_1, // 40MHz, see systemInit()
 		FORMAT,
-		sequence,
+		adcInput,
 		adc::Trigger::ADC12_TIM1_TRGO}; // triggered by TIM1
-	Adc::Buffer1<2 * SAMPLE_COUNT * sizeof(Sample)> buffer1{adc};
-	Adc::Buffer2 buffer2{buffer1};
+	Adc::Buffer1<SAMPLE_COUNT * sizeof(Sample)> buffer1{adc};
+	Adc::Buffer2<SAMPLE_COUNT * sizeof(Sample)> buffer2{buffer1};
 
 	// DAC for generating analog values that are measured by the ADC
 	using Dac = Dac_DAC;
 	Dac dac{dacPins,
 		dac::DAC1_INFO,
-		dac::Config::DUAL | dac::Config::DAC1_CH2_OUTPUT_ENABLE};
+		dac::DualConfig::CH2_OUTPUT_ENABLE};
 
 	Drivers() {
 		// configure TIM1 as trigger for the ADC that runs at 1kHz
-		timer::TIM1_INFO.configure(APB2_TIMER_CLOCK, 1kHz).setMaster(timer::MasterMode::UPDATE).start();
+		timer::TIM1_INFO.enableClock()
+			.setUpdateFrequency(APB2_TIMER_CLOCK, 100kHz)
+			.setMasterMode(timer::MasterMode::UPDATE)
+			.start();
 	}
 };
 
