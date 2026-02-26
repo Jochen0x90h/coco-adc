@@ -32,6 +32,7 @@ const adc::Input adcInput[] = {adc::Input::CH1 | adc::Input::CYCLES_6_5};
 
 
 /// @brief Drivers for AdcDeviceTest
+/// Make sure the VREF jumper is at default position (1-2)
 /// Connect DAC channel 0 to ADC (CN10 18 -> CN8 1)
 /// Connect DAC channel 1 to oscilloscope (CN10 24)
 struct Drivers {

@@ -74,7 +74,7 @@ public:
 
         /// @brief Transfer the buffer contents from the ADC. The whole buffer gets transferred regardless of the current size.
         ///
-        bool start(Op op) override;
+        bool start() override;
         bool cancel() override;
 
     protected:
@@ -94,17 +94,17 @@ public:
     class Buffer1 : public BufferBase {
         friend class Buffer2<C>;
     public:
-        Buffer1(AdcDevice_ADC_DMA &device) : BufferBase(data_, C, device, 1) {}
+        Buffer1(AdcDevice_ADC_DMA &device) : BufferBase(data_, align2(C), device, 1) {}
 
     protected:
         // data for Buffer1 and Buffer2
-        alignas(4) uint8_t data_[C * 2];
+        alignas(4) uint8_t data_[align2(C) * 2];
     };
 
     template <int C>
     class Buffer2 : public BufferBase {
     public:
-        Buffer2(Buffer1<C> &buffer) : BufferBase(buffer.data_ + C, C, buffer.device_, 2) {}
+        Buffer2(Buffer1<C> &buffer) : BufferBase(buffer.data_ + align2(C), align2(C), buffer.device_, 2) {}
     };
 
 

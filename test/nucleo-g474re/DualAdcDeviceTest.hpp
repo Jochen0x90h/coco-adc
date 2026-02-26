@@ -40,6 +40,7 @@ const gpio::Config dac3Pins[] = {
 
 
 /// @brief Drivers for AdcDeviceTest
+/// Make sure the VREF jumper is at default position (1-2)
 /// Connect DAC1 channel 1 to ADC channel 1 (CN8 3 -> CN8 1)
 /// Connect DAC1 channel 2 to ADC channel 2 (CN5 6 -> CN8 2)
 /// Connect DAC3 channel 1/2 to oscilloscope (CN10 18, CN10 24)

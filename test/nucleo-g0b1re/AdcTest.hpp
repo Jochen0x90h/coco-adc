@@ -29,6 +29,7 @@ const adc::Input adcInputs[] = {adc::Input::CH0 | adc::Input::CYCLES_7_5, adc::I
 
 
 /// @brief Drivers for AdcTest
+/// Make sure SB28 is closed to provice VREF+ (is default)
 /// Connect DAC1 channel 1 to ADC channel 1 (CN8 3 -> CN8 1)
 /// Connect DAC1 channel 2 to ADC channel 2 (CN5 6 -> CN8 2)
 /// Connect DAC3 channel 1/2 to oscilloscope (CN9 2, CN10 24) Note: This is not the default function, change SB17 and SB18
