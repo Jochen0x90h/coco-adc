@@ -25,17 +25,11 @@ AdcDevice_ADC_DMA::AdcDevice_ADC_DMA(Loop_Queue &loop, Array<const gpio::Config>
 
 
     // initialize DMA channel
-#if defined(STM32F3) && !(defined(__STM32F334x8_H) || defined(__STM32F398xx_H))
-    const int destinationShift = 1; // only 16 bytes
-#else
-    const int resolution = extract(config, adc::Config::RES_MASK);
-    int destinationShift = 1 - (resolution >> 1); // 8 or 16 bytes
-#endif
+    int destinationShift = adc::getResolution(config);
     dmaChannel_ = dmaInfo.enableClock<DmaChannel::MODE>()
         .configure(destinationShift, dma::Destination::INCREMENT)
         .setSourceAddress(&adcInfo.adc->DR);
     dmaIrq_ = dmaInfo.irq;
-    //dmaChannel.destinationSize = 1 - (resolution >> 1); // 8 or 16 bytes
 
 	// map DMA to ADC
     adcInfo.map(dmaInfo);
@@ -60,23 +54,19 @@ AdcDevice_ADC_DMA::AdcDevice_ADC_DMA(Loop_Queue &loop, Array<const gpio::Config>
         .enable(config, trigger, adc::DmaMode::CIRCULAR)
         .setSequence1(sequence1)
         .setSequence2(sequence2)
-        [0];//.master();
+        [0]; // master
 
 
     // initialize DMA channel
-    const int resolution = extract(config, adc::Config::RES_MASK);
-    int destinationShift = 2 - (resolution >> 1); // 16 or 32 bytes
+    int destinationShift = 1 + adc::getResolution(config); // 16 or 32 bits
     dmaChannel_ = dmaInfo.enableClock<DmaChannel::MODE>()
         .configure(destinationShift, dma::Destination::INCREMENT)
         .setSourceAddress(&adcInfo.common->CDR);
-    //dmaChannel.destinationSize = 2 - (resolution >> 1); // 16 or 32 bytes
     dmaIrq_ = dmaInfo.irq;
     nvic::setPriority(dmaIrq_, nvic::Priority::MEDIUM); // interrupt gets enabled in first call to start()
 
 	// map DMA to ADC
-#ifndef STM32U3 // todo fix map() for U3
     adcInfo.map(dmaInfo);
-#endif
 }
 #endif
 
@@ -189,7 +179,7 @@ bool AdcDevice_ADC_DMA::BufferBase::start() {
 }
 
 bool AdcDevice_ADC_DMA::BufferBase::cancel() {
-    if (st.state != State::BUSY)
+    if (state_ != State::BUSY)
         return false;
 
     // not supported, always complete normally

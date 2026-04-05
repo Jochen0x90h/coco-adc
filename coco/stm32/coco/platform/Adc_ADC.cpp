@@ -16,8 +16,13 @@ Adc_ADC::Adc_ADC(Array<const gpio::Config> analogPins, const adc::Info &adcInfo,
 
     // configure ADC
     adc_ = adcInfo.enableClock(clockConfig)
-        .calibrate()
-        .enable(config, adc::Trigger::SOFTWARE);
+        .calibrate();
+
+    for (int i = 0; i < 8; ++i)
+        __NOP();
+    __NOP();
+    __NOP();
+    adc_.enable(config, adc::Trigger::SOFTWARE);
 }
 
 Adc_ADC::~Adc_ADC() {

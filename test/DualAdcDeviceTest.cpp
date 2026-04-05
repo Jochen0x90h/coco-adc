@@ -24,7 +24,7 @@ Coroutine run(Loop &loop, Dac &generatorDac, Buffer &buffer1, Buffer &buffer2, D
 
         // sample buffer 1
         co_await buffer1.untilReadyOrDisabled();
-        auto val1 = buffer1.pointer<Sample>()[SAMPLE_COUNT - 1];
+        auto val1 = buffer1.cast<Array<Sample>>()[SAMPLE_COUNT - 1];
         debug::setGreen((val1.x & 0x80) != 0);
 
         // output value on test DAC so that it can be measured
@@ -43,7 +43,7 @@ Coroutine run(Loop &loop, Dac &generatorDac, Buffer &buffer1, Buffer &buffer2, D
 
         // wait for buffer 2
         co_await buffer2.untilReadyOrDisabled();
-        auto val2 = buffer2.pointer<Sample>()[SAMPLE_COUNT - 1];
+        auto val2 = buffer2.cast<Array<Sample>>()[SAMPLE_COUNT - 1];
         debug::setGreen((val2.x & 0x80) != 0);
 
         // output value on test DAC so that it can be measured

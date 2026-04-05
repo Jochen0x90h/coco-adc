@@ -26,7 +26,7 @@ Coroutine run(Loop &loop, Dac &dac, Buffer &buffer1, Buffer &buffer2) {
 
         // sample buffer 1
         co_await buffer1.untilReadyOrDisabled();
-        auto val1 = buffer1.pointer<Sample>()[SAMPLE_COUNT - 1];
+        auto val1 = buffer1.cast<Array<Sample>>()[SAMPLE_COUNT - 1];
         debug::setGreen((val1 & 0x80) != 0);
 
         // output value on second channel of DAC so that it can be measured using an oscilloscope
@@ -43,7 +43,7 @@ Coroutine run(Loop &loop, Dac &dac, Buffer &buffer1, Buffer &buffer2) {
 
         // wait for buffer 2
         co_await buffer2.untilReadyOrDisabled();
-        auto val2 = buffer2.pointer<Sample>()[SAMPLE_COUNT - 1];
+        auto val2 = buffer2.cast<Array<Sample>>()[SAMPLE_COUNT - 1];
         debug::setGreen((val2 & 0x80) != 0);
 
         // output value on channel 1 of DAC so that it can be measured

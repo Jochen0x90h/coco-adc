@@ -14,12 +14,12 @@ using namespace coco;
 
 
 Coroutine run(Loop &loop, Dac &generatorDac, Adc &adc, Dac &testDac) {
-    uint8_t level = 0;
+    uint8_t i = 0;
     while (true) {
         // set level to ADC inputs using ADC
-        generatorDac.set(0, level << 8);
-        generatorDac.set(1, int8_t(level + 128) << 8);
-        ++level;
+        generatorDac.set(0, i << 8);
+        generatorDac.set(1, int8_t(i + 128) << 8);
+        ++i;
 
         // sample
         int val0 = adc.get(0);
@@ -30,7 +30,7 @@ Coroutine run(Loop &loop, Dac &generatorDac, Adc &adc, Dac &testDac) {
         testDac.set(1, val1);
 
         // output sampled values to debug console
-        if ((level & 3) == 0)
+        if ((i & 3) == 0)
             debug::out << dec(val0) << ' ' << dec(val1) << '\n';
         co_await loop.sleep(10ms);
     }
