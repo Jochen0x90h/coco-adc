@@ -5,7 +5,7 @@
 
 namespace coco {
 
-Adc_ADC::Adc_ADC(Array<const gpio::Config> analogPins, const adc::Info &adcInfo,
+Adc_ADC::Adc_ADC(const adc::Info &adcInfo, Array<const gpio::Config> analogPins,
     adc::ClockConfig clockConfig, adc::Config config, Array<const adc::Input> inputs)
     : inputs_(inputs)
 {

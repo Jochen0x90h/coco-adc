@@ -41,8 +41,8 @@ struct Drivers {
     // ADC
     using Adc = AdcDevice_ADC_DMA;
     Adc adc{loop,
-        adcPins,
         adc::ADC1_INFO,
+        adcPins,
         dma::DMA1_CH1_INFO,
         //Adc::ClockConfig::AHB_DIV_4,  // 40MHz, see board/config.hpp
         adc::ClockConfig::RCC_DIV_1, // 45.7MHz, see systemInit()
@@ -54,9 +54,10 @@ struct Drivers {
 
     // DAC for generating analog values that are measured by the ADC
     using Dac = Dac_DAC;
-    Dac dac{dacPins,
+    Dac dac{
         //dac::DAC1_INFO,
         dac::DAC3_INFO,
+        dacPins,
         AHB_CLOCK,
         //dac::DualConfig::BUFFERED_EXTERNAL, // DAC1 goes directly to pins
         dac::DualConfig::INTERNAL}; // DAC3 is internally connected to op-amps

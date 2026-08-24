@@ -28,13 +28,13 @@ class Adc_ADC : public Adc {
 public:
     ///
     /// Constructor of the ADC wrapper.
-    /// @param analogPins analog pins
     /// @param adcInfo info of ADC to use
+    /// @param analogPins analog pins
     /// @param clockConfig clock configuration of ADC
     /// @param config configuration of ADC
     /// @param inputs input to use for the channels
     ///
-    Adc_ADC(Array<const gpio::Config> analogPins, const adc::Info &adcInfo,
+    Adc_ADC(const adc::Info &adcInfo, Array<const gpio::Config> analogPins,
         adc::ClockConfig clockConfig, adc::Config config, Array<const adc::Input> inputs);
 
     ~Adc_ADC() override;

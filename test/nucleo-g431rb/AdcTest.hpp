@@ -44,22 +44,25 @@ struct Drivers {
 
     // ADC
     using Adc = Adc_ADC;
-    Adc adc{adcPins,
+    Adc adc{
         adc::ADC1_INFO,
+        adcPins,
         adc::ClockConfig::RCC_DIV_1, // 45.7MHz, see systemInit()
         FORMAT,
         adcInputs};
 
     // DAC for generating analog values that are measured by the ADC
     using Dac = Dac_DAC;
-    Dac generatorDac{dac1Pins,
+    Dac generatorDac{
         dac::DAC1_INFO,
+        dac1Pins,
         AHB_CLOCK,
         dac::DualConfig::BUFFERED_EXTERNAL}; // DAC1 directly goes to pins
 
     // second DAC for monitoring
-    Dac testDac{dac3Pins,
+    Dac testDac{
         dac::DAC3_INFO,
+        dac3Pins,
         AHB_CLOCK,
         1, dac::Config::INTERNAL}; // DAC3 is internally connected to op-amps
         //dac::DualConfig::INTERNAL}; // DAC3 is internally connected to op-amps

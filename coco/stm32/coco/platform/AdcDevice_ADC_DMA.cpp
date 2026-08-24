@@ -5,9 +5,8 @@
 
 namespace coco {
 
-AdcDevice_ADC_DMA::AdcDevice_ADC_DMA(Loop_Queue &loop, Array<const gpio::Config> analogPins,
-    const adc::Info &adcInfo, const dma::Info<dma::Feature::CIRCULAR> &dmaInfo,
-    adc::ClockConfig clockConfig, adc::Config config,
+AdcDevice_ADC_DMA::AdcDevice_ADC_DMA(Loop_Queue &loop, const adc::Info &adcInfo, Array<const gpio::Config> analogPins,
+    const dma::Info<dma::Feature::CIRCULAR> &dmaInfo, adc::ClockConfig clockConfig, adc::Config config,
     Array<const adc::Input> sequence, adc::Trigger trigger)
     : AdcDevice(State::READY)
     , loop_(loop)
@@ -36,9 +35,9 @@ AdcDevice_ADC_DMA::AdcDevice_ADC_DMA(Loop_Queue &loop, Array<const gpio::Config>
 }
 
 #ifdef HAVE_ADC_DUAL_MODE
-AdcDevice_ADC_DMA::AdcDevice_ADC_DMA(Loop_Queue &loop, Array<const gpio::Config> analogPins,
-    const adc::DualInfo &adcInfo, const dma::Info<dma::Feature::CIRCULAR> &dmaInfo,
-    adc::ClockConfig clockConfig, adc::Config config,
+AdcDevice_ADC_DMA::AdcDevice_ADC_DMA(Loop_Queue &loop, const adc::DualInfo &adcInfo,
+    Array<const gpio::Config> analogPins,
+    const dma::Info<dma::Feature::CIRCULAR> &dmaInfo, adc::ClockConfig clockConfig, adc::Config config,
     Array<const adc::Input> sequence1, Array<const adc::Input> sequence2, adc::Trigger trigger)
     : AdcDevice(State::READY)
     , loop_(loop)
@@ -186,7 +185,7 @@ bool AdcDevice_ADC_DMA::BufferBase::cancel() {
     return true;
 }
 
-void AdcDevice_ADC_DMA::BufferBase::handle() {
+void AdcDevice_ADC_DMA::BufferBase::onCompletion() {
     // always transfers full capacity
     setSuccess(capacity_);
     setReady();

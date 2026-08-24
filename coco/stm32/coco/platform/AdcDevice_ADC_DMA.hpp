@@ -28,39 +28,37 @@ class AdcDevice_ADC_DMA : public AdcDevice {
 public:
     /// @brief Constructor of the ADC device.
     /// @param loop event loop
-    /// @param analogPins analog pins
     /// @param adcInfo info of dual ADC to use
+    /// @param analogPins analog pins
     /// @param dmaInfo info of DMA channel to use
     /// @param clockConfig clock configuration of ADC
     /// @param config configuration of ADC channels
     /// @param sequence input sequence, may have restrictions based on hardware
     /// @param trigger trigger index, see reference manual
-    AdcDevice_ADC_DMA(Loop_Queue &loop, Array<const gpio::Config> analogPins,
-        const adc::Info &adcInfo, const dma::Info<dma::Feature::CIRCULAR> &dmaInfo,
-        adc::ClockConfig clockConfig, adc::Config config,
+    AdcDevice_ADC_DMA(Loop_Queue &loop, const adc::Info &adcInfo, Array<const gpio::Config> analogPins,
+        const dma::Info<dma::Feature::CIRCULAR> &dmaInfo, adc::ClockConfig clockConfig, adc::Config config,
         Array<const adc::Input> sequence, adc::Trigger trigger);
 
 #ifdef HAVE_ADC_DUAL_MODE
     /// @brief Constructor of the ADC device in dual mode.
     /// @param loop event loop
-    /// @param analogPins analog pins
     /// @param adcInfo info of dual ADC to use
+    /// @param analogPins analog pins
     /// @param dmaInfo info of DMA channel to use
     /// @param clockConfig clock configuration of both ADC channels
     /// @param config configuration of ADC channels
     /// @param sequence1 input sequence for first channel, may have restrictions based on hardware
     /// @param sequence2 input sequence for second channel, may have restrictions based on hardware
     /// @param trigger trigger index, see reference manual
-    AdcDevice_ADC_DMA(Loop_Queue &loop, Array<const gpio::Config> analogPins,
-        const adc::DualInfo &adcInfo, const dma::Info<dma::Feature::CIRCULAR> &dmaInfo,
-        adc::ClockConfig clockConfig, adc::Config config,
+    AdcDevice_ADC_DMA(Loop_Queue &loop, const adc::DualInfo &adcInfo, Array<const gpio::Config> analogPins,
+        const dma::Info<dma::Feature::CIRCULAR> &dmaInfo, adc::ClockConfig clockConfig, adc::Config config,
         Array<const adc::Input> sequence1, Array<const adc::Input> sequence2, adc::Trigger trigger);
 #endif
 
     ~AdcDevice_ADC_DMA() override;
 
     // internal buffer base class, derives from IntrusiveListNode for the list of active transfers and Loop_Queue::Handler to be notified from the event loop
-    class BufferBase : public coco::Buffer, public IntrusiveListNode, public Loop_Queue::Handler {
+    class BufferBase : public coco::Buffer, public IntrusiveListNode, public Loop_Queue::CompletionHandler {
         friend class AdcDevice_ADC_DMA;
         //friend class Buffer2;
     public:
@@ -78,7 +76,7 @@ public:
         bool cancel() override;
 
     protected:
-        void handle() override;
+        void onCompletion() override;
 
         AdcDevice_ADC_DMA &device_;
         int id_;
